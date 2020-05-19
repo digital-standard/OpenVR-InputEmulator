@@ -6,6 +6,8 @@
 #include <openvr.h>
 #include <openvr_math.h>
 
+std::stringstream ss;
+
 
 
 VRInputEmulatorWrapper::VRInputEmulatorWrapper() :
@@ -89,7 +91,7 @@ void VRInputEmulatorWrapper::SetDeviceConnection(int32_t id, int32_t cnn)
 	}
 }
 
-void VRInputEmulatorWrapper::SetDevicePosition(int32_t id, const char *argX, const char *argY, const char *argZ)
+int32_t VRInputEmulatorWrapper::SetDevicePosition(int32_t id, const char *argX, const char *argY, const char *argZ) try
 {
 	uint32_t deviceId = id;
 	float x = (float)std::atof(argX);
@@ -103,9 +105,14 @@ void VRInputEmulatorWrapper::SetDevicePosition(int32_t id, const char *argX, con
 	pose.poseIsValid = true;
 	pose.result = vr::TrackingResult_Running_OK;
 	inputEmulator->setVirtualDevicePose(deviceId, pose);
+
+	return 1;
+}
+catch (const std::exception&) {
+	return -1;
 }
 
-void VRInputEmulatorWrapper::SetDeviceRotation(int32_t id, const char *argYaw, const char *argPitch, const char *argRoll)
+int32_t VRInputEmulatorWrapper::SetDeviceRotation(int32_t id, const char *argYaw, const char *argPitch, const char *argRoll) try
 {
 	uint32_t deviceId = id;
 	float yaw = (float)std::atof(argYaw);
@@ -117,12 +124,17 @@ void VRInputEmulatorWrapper::SetDeviceRotation(int32_t id, const char *argYaw, c
 	pose.poseIsValid = true;
 	pose.result = vr::TrackingResult_Running_OK;
 	inputEmulator->setVirtualDevicePose(deviceId, pose);
+
+	return 1;
+}
+catch (const std::exception&) {
+	return -1;
 }
 
 
 
-void VRInputEmulatorWrapper::ButtonEvent(const char * eventStr, int32_t id, int32_t btnId, int32_t holdT) {
-
+int32_t VRInputEmulatorWrapper::ButtonEvent(const char * eventStr, int32_t id, int32_t btnId, int32_t holdT) try
+{
 	bool noHold = false;
 	vrinputemulator::ButtonEventType eventType;
 
@@ -147,7 +159,7 @@ void VRInputEmulatorWrapper::ButtonEvent(const char * eventStr, int32_t id, int3
 		eventType = vrinputemulator::ButtonEventType::ButtonUntouched;
 	}
 	else {
-		return;
+		return 0;
 	}
 
 	uint32_t holdTime = 50;
@@ -169,9 +181,61 @@ void VRInputEmulatorWrapper::ButtonEvent(const char * eventStr, int32_t id, int3
 		}
 		inputEmulator->openvrButtonEvent(eventType, deviceId, buttonId, 0.0);
 	}
+	return 1;
+}
+catch (const std::exception&) {
+	return -1;
+}
+
+
+int32_t VRInputEmulatorWrapper::AxisEvent(int32_t id, int32_t axis, const char *x, const char *y) try
+{
+	uint32_t deviceId = id;
+	uint32_t axisId = axis;
+	vr::VRControllerAxis_t axisState;
+	axisState.x = (float)std::atof(x);
+	axisState.y = (float)std::atof(y);
+
+	inputEmulator->openvrAxisEvent(deviceId, axisId, axisState);
+
+	return 1;
+}
+catch (const std::exception&) {
+	return -1;
+}
+
+int32_t VRInputEmulatorWrapper::GetDeviceID(const char *serial)
+{
+	auto deviceCount = inputEmulator->getVirtualDeviceCount();
+	for (unsigned i = 0; i < deviceCount; ++i) {
+		auto deviceInfo = inputEmulator->getVirtualDeviceInfo(i);
+
+		if (std::strcmp(deviceInfo.deviceSerial.c_str(), serial) == 0)
+		{
+			return deviceInfo.openvrDeviceId;
+		}
+	}
+	return -1;
+}
+
+int32_t VRInputEmulatorWrapper::GetOpenVRDeviceID(const char *serial)
+{
+	auto deviceCount = inputEmulator->getVirtualDeviceCount();
+	for (unsigned i = 0; i < deviceCount; ++i) {
+		auto deviceInfo = inputEmulator->getVirtualDeviceInfo(i);
+
+		if (std::strcmp(deviceInfo.deviceSerial.c_str(), serial) == 0)
+		{
+			return i;
+		}
+	}
+
+	return -1;
 }
 
 void VRInputEmulatorWrapper::Disconnect()
 {
 	inputEmulator->disconnect();
+
+	//vr::VR_Shutdown();
 }

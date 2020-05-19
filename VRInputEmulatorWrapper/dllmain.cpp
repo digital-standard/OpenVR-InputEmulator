@@ -34,9 +34,12 @@ extern "C" __declspec(dllexport) int32_t STDMETHODCALLTYPE CreateVRInputEmulator
 		Proxy<IVRInputEmulatorWrapper, int32_t, int32_t, int32_t, const char *, const char *>::Func<&IVRInputEmulatorWrapper::SetDeviceProperty>,
 		Proxy<IVRInputEmulatorWrapper, void, int32_t>::Func<&IVRInputEmulatorWrapper::PublishTrackedDevice>,
 		Proxy<IVRInputEmulatorWrapper, void, int32_t, int32_t>::Func<&IVRInputEmulatorWrapper::SetDeviceConnection>,
-		Proxy<IVRInputEmulatorWrapper, void, int32_t, const char *, const char *, const char *>::Func<&IVRInputEmulatorWrapper::SetDevicePosition>,
-		Proxy<IVRInputEmulatorWrapper, void, int32_t, const char *, const char *, const char *>::Func<&IVRInputEmulatorWrapper::SetDeviceRotation>,
-		Proxy<IVRInputEmulatorWrapper, void, const char *, int32_t, int32_t, int32_t>::Func<&IVRInputEmulatorWrapper::ButtonEvent>,
+		Proxy<IVRInputEmulatorWrapper, int32_t, int32_t, const char *, const char *, const char *>::Func<&IVRInputEmulatorWrapper::SetDevicePosition>,
+		Proxy<IVRInputEmulatorWrapper, int32_t, int32_t, const char *, const char *, const char *>::Func<&IVRInputEmulatorWrapper::SetDeviceRotation>,
+		Proxy<IVRInputEmulatorWrapper, int32_t, const char *, int32_t, int32_t, int32_t>::Func<&IVRInputEmulatorWrapper::ButtonEvent>,
+		Proxy<IVRInputEmulatorWrapper, int32_t, int32_t, int32_t, const char *, const char *>::Func<&IVRInputEmulatorWrapper::AxisEvent>,
+		Proxy<IVRInputEmulatorWrapper, int32_t, const char *>::Func<&IVRInputEmulatorWrapper::GetDeviceID>,
+		Proxy<IVRInputEmulatorWrapper, int32_t, const char *>::Func<&IVRInputEmulatorWrapper::GetOpenVRDeviceID>,
 		Proxy<IVRInputEmulatorWrapper, void>::Func<&IVRInputEmulatorWrapper::Disconnect>,
 	};
 
