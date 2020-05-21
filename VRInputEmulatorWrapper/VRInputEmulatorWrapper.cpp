@@ -212,7 +212,7 @@ int32_t VRInputEmulatorWrapper::GetDeviceID(const char *serial)
 
 		if (std::strcmp(deviceInfo.deviceSerial.c_str(), serial) == 0)
 		{
-			return deviceInfo.openvrDeviceId;
+			return i;
 		}
 	}
 	return -1;
@@ -226,7 +226,7 @@ int32_t VRInputEmulatorWrapper::GetOpenVRDeviceID(const char *serial)
 
 		if (std::strcmp(deviceInfo.deviceSerial.c_str(), serial) == 0)
 		{
-			return i;
+			return deviceInfo.openvrDeviceId;
 		}
 	}
 

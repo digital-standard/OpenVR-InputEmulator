@@ -14,7 +14,9 @@ public class SampleScript : MonoBehaviour
     public InputField Roll;
 
     private VRInputEmulatorWrapper vrInputEmulator = null;
-    private List<ViveController> viveControllers = new List<ViveController>();
+    private List<VirtualController> virtualController = new List<VirtualController>();
+
+    bool triggerDown = false;
 
     void Start()
     {
@@ -23,31 +25,30 @@ public class SampleScript : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.Return))
+        if (virtualController.Count == 5)
         {
-            viveControllers[1].ButtonEvent("press", VRInputEmulatorWrapper.EVRButtonId.k_EButton_System, 100);
-        }
-        else if (Input.GetKey(KeyCode.Escape))
-        {
-            viveControllers[0].ButtonEvent("press", VRInputEmulatorWrapper.EVRButtonId.k_EButton_ApplicationMenu, 50);
-        }
-        else if (Input.GetKey(KeyCode.Space))
-        {
-            if (!triggerDown)
+            if (Input.GetKey(KeyCode.Return))
             {
-                triggerDown = true;
-                viveControllers[1].AxisEvent(1, "1", "0");
+                virtualController[1].ButtonEvent("press", VRInputEmulatorWrapper.EVRButtonId.k_EButton_System, 50);
             }
-            else
+            else if (Input.GetKey(KeyCode.Escape))
             {
-                triggerDown = false;
-                viveControllers[1].AxisEvent(1, "0", "0");
+                virtualController[0].ButtonEvent("press", VRInputEmulatorWrapper.EVRButtonId.k_EButton_ApplicationMenu, 50);
+            }
+            else if (Input.GetKey(KeyCode.Space))
+            {
+                if (!triggerDown)
+                {
+                    triggerDown = true;
+                    virtualController[1].AxisEvent(1, "1", "0");
+                }
+                else
+                {
+                    triggerDown = false;
+                    virtualController[1].AxisEvent(1, "0", "0");
+                }
             }
         }
-    }
-
-    private void CreateControllers()
-    {
     }
 
     public void onAdd3Ctrl()
@@ -58,17 +59,9 @@ public class SampleScript : MonoBehaviour
             var res = vrInputEmulator.Connect();
             if (vrInputEmulator.Connect() > 0)
             {
-                AddTrackedController("OVRIE_Tracker_1");
-                AddTrackedController("OVRIE_Tracker_2");
-                AddTrackedController("OVRIE_Tracker_3");
-
-                Controllers.value = 0;
-                viveControllers[0].SetDevicePosition(0f, 0.8f, 0f);
-                viveControllers[1].SetDevicePosition(-0.18f, 0f, 0f);
-                viveControllers[2].SetDevicePosition(0.18f, 0f, 0f);
+                StartCoroutine(AddTrackedController(true));
             }
         }
-
     }
 
     public void onAdd5Ctrl()
@@ -79,29 +72,112 @@ public class SampleScript : MonoBehaviour
             var res = vrInputEmulator.Connect();
             if (vrInputEmulator.Connect() > 0)
             {
-                AddTrackedController("OVRIE_Controller_L");
-                AddTrackedController("OVRIE_Controller_R");
-
-                AddTrackedController("OVRIE_Tracker_1");
-                AddTrackedController("OVRIE_Tracker_2");
-                AddTrackedController("OVRIE_Tracker_3");
-
-                Controllers.value = 0;
-                viveControllers[0].SetDevicePosition(-0.8f, 1.3f, 0f);
-                viveControllers[0].SetDeviceRotation(90f, 0f, 0f);
-                viveControllers[1].SetDevicePosition(0.8f, 1.3f, 0f);
-                viveControllers[1].SetDeviceRotation(-90f, 0f, 0f);
-
-                viveControllers[2].SetDevicePosition(0f, 0.8f, 0f);
-                viveControllers[3].SetDevicePosition(-0.18f, 0f, 0f);
-                viveControllers[4].SetDevicePosition(0.18f, 0f, 0f);
+                StartCoroutine(AddTrackedController(false));
             }
         }
     }
 
-    private ViveController AddTrackedController(string serial)
+    IEnumerator AddTrackedController(bool isTrackerOnly)
     {
-        var ctrl = new ViveController(vrInputEmulator);
+        var cnt = 5;
+
+        if (!isTrackerOnly)
+        {
+            AddTrackedController("OVRIE_Controller_L", true, true);
+            while (cnt > 0)
+            {
+                yield return new WaitForSeconds(1);
+                if (virtualController[virtualController.Count - 1].GetOpenVRDeviceID() >= 0)
+                {
+                    break;
+                }
+                cnt--;
+            }
+            if (cnt == 0)
+            {
+                yield break;
+            }
+
+            AddTrackedController("OVRIE_Controller_R", true, false);
+            cnt = 5;
+            while (cnt > 0)
+            {
+                yield return new WaitForSeconds(1);
+                if (virtualController[virtualController.Count - 1].GetOpenVRDeviceID() >= 0)
+                {
+                    break;
+                }
+                cnt--;
+            }
+            if (cnt == 0)
+            {
+                yield break;
+            }
+        }
+
+        AddTrackedController("OVRIE_Tracker_1", false);
+        cnt = 5;
+        while (cnt > 0)
+        {
+            yield return new WaitForSeconds(1);
+            if (virtualController[virtualController.Count - 1].GetOpenVRDeviceID() >= 0)
+            {
+                break;
+            }
+            cnt--;
+        }
+        if (cnt == 0)
+        {
+            yield break;
+        }
+        
+        AddTrackedController("OVRIE_Tracker_2", false);
+        cnt = 5;
+        while (cnt > 0)
+        {
+            yield return new WaitForSeconds(1);
+            if (virtualController[virtualController.Count - 1].GetOpenVRDeviceID() >= 0)
+            {
+                break;
+            }
+            cnt--;
+        }
+        if (cnt == 0)
+        {
+            yield break;
+        }
+
+        AddTrackedController("OVRIE_Tracker_3", false);
+        cnt = 5;
+        while (cnt > 0)
+        {
+            yield return new WaitForSeconds(1);
+            if (virtualController[virtualController.Count - 1].GetOpenVRDeviceID() >= 0)
+            {
+                break;
+            }
+            cnt--;
+        }
+        if (cnt == 0)
+        {
+            yield break;
+        }
+        
+        Controllers.value = 0;
+        virtualController[0].SetDevicePosition(-0.8f, 1.3f, 0f);
+        virtualController[0].SetDeviceRotation(90f, 0f, 0f);
+        virtualController[1].SetDevicePosition(0.8f, 1.3f, 0f);
+        virtualController[1].SetDeviceRotation(-90f, 0f, 0f);
+        
+        virtualController[2].SetDevicePosition(0f, 0.8f, 0f);
+        virtualController[3].SetDevicePosition(-0.18f, 0f, 0f);
+        virtualController[4].SetDevicePosition(0.18f, 0f, 0f);
+    }
+
+
+    private VirtualController AddTrackedController(string serial, bool isController, bool isL = true)
+    {
+        var ctrl = new VirtualController(vrInputEmulator);
         var idL = ctrl.AddTrackedController(serial);
         if (idL < 0)
         {
@@ -110,10 +186,17 @@ public class SampleScript : MonoBehaviour
         }
         else
         {
-            ctrl.SetDeviceProperty();
+            if(isController)
+            {
+                ctrl.SetControllerProperty(isL);
+            }
+            else
+            {
+                ctrl.SetTrackerProperty();
+            }
         }
 
-        viveControllers.Add(ctrl);
+        virtualController.Add(ctrl);
         Controllers.options.Add(new Dropdown.OptionData(serial));
 
         return ctrl;
@@ -137,7 +220,7 @@ public class SampleScript : MonoBehaviour
             Debug.Log("error PosZ");
         }
 
-        viveControllers[Controllers.value].SetDevicePosition(x, y, z);
+        virtualController[Controllers.value].SetDevicePosition(x, y, z);
     }
 
     public void onRotate()
@@ -158,43 +241,39 @@ public class SampleScript : MonoBehaviour
             Debug.Log("error Roll");
         }
 
-        viveControllers[Controllers.value].SetDeviceRotation(yaw, pitch, roll);
+        virtualController[Controllers.value].SetDeviceRotation(yaw, pitch, roll);
     }
-
-    bool systemDown = false;
-    bool triggerDown = false;
 
     public void onSystemDown()
     {
-        if (!systemDown)
-        {
-            systemDown = true;
-            viveControllers[Controllers.value].ButtonEvent("press", VRInputEmulatorWrapper.EVRButtonId.k_EButton_System, 50);
-        }
+        virtualController[Controllers.value].ButtonEvent("press", VRInputEmulatorWrapper.EVRButtonId.k_EButton_System, 50);
     }
+
     public void onSystemUp()
     {
         triggerDown = false;
-        //viveControllers[Controllers.value].ButtonEvent("unpress", VRInputEmulatorWrapper.EVRButtonId.k_EButton_System, 50);
+    }
+
+    public void onAppDown()
+    {
+        virtualController[Controllers.value].ButtonEvent("press", VRInputEmulatorWrapper.EVRButtonId.k_EButton_ApplicationMenu, 50);
     }
 
     public void onTriggerDown()
     {
-        //if (!triggerDown)
-        {
-            triggerDown = true;
-            viveControllers[Controllers.value].AxisEvent(1, "1", "0");
-        }
+        triggerDown = true;
+        virtualController[Controllers.value].AxisEvent(1, "1", "0");
     }
+
     public void onTriggerUp()
     {
         triggerDown = false;
-        viveControllers[Controllers.value].AxisEvent(1, "0", "0");
+        virtualController[Controllers.value].AxisEvent(1, "0", "0");
     }
 
     private void OnDestroy()
     {
-        viveControllers.ForEach(v => v.Disconnect());
-        viveControllers.Clear();
+        virtualController.ForEach(v => v.Disconnect());
+        virtualController.Clear();
     }
 }
