@@ -14,5 +14,5 @@ I haven't been able to delete the virtual controller I added yet. Please restart
 
 </br>
 This is a demo of adding 45 trackers from Unity to SteamVR and running them.</br>
-(docs/screenshots/VCon45.gif)
+![VCon45.gif](docs/screenshots/VCon45.gif)
 
