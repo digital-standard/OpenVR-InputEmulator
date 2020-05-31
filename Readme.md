@@ -5,7 +5,6 @@ OpenVR-InputEmulatorのclient_commandline.exeのdll版です。
 diiファイルとC#ラッパーのコードは、Unity用のサンプルコード使用してください。
 
 まだ追加した仮想コントローラの削除ができません。毎回SteamVRを再起動してください。<br />
-![VCon45.gif](docs/screenshots/VSCon45.gif)
 
 This is a dll version of client_commandline.exe from OpenVR-InputEmulator.
 It's also a C# wrapper for that dll.
