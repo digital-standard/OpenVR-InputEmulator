@@ -12,6 +12,6 @@ Please use the sample code for Unity for the dii file and the C# wrapper.
 
 I haven't been able to delete the virtual controller I added yet. Please restart SteamVR each time.
 
-<br />
-This is a demo of adding 45 trackers from Unity to SteamVR and running them.<br />
+</br>
+This is a demo of adding 45 trackers from Unity to SteamVR and running them.</br>
  ![VCon45.gif](docs/screenshots/VCon45.gif)
