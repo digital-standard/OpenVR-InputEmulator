@@ -4,7 +4,8 @@ OpenVR-InputEmulatorのclient_commandline.exeのdll版です。
 また、そのdllのC#ラッパーです。
 diiファイルとC#ラッパーのコードは、Unity用のサンプルコード使用してください。
 
-まだ追加した仮想コントローラの削除ができません。毎回SteamVRを再起動してください。
+まだ追加した仮想コントローラの削除ができません。毎回SteamVRを再起動してください。<br />
+![VCon45.gif](docs/screenshots/VSCon45.gif)
 
 This is a dll version of client_commandline.exe from OpenVR-InputEmulator.
 It's also a C# wrapper for that dll.
@@ -15,3 +16,4 @@ I haven't been able to delete the virtual controller I added yet. Please restart
 </br>
 This is a demo of adding 45 trackers from Unity to SteamVR and running them.</br>
 ![VCon45.gif](docs/screenshots/VSCon45.gif)
+
